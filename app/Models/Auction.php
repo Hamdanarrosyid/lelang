@@ -13,9 +13,10 @@ class Auction extends Model
 
     protected $table = 'auctions';
     protected $primaryKey = 'id';
-    protected $attributes =[
-        'status' => ['opened','closed'],
-    ];
+//    protected $attributes =[
+//        'status' => ['opened','closed'],
+//    ];
+    protected $fillable=['goods_id','auction_date','status','final_price'];
 
     public function goods(): BelongsTo
     {

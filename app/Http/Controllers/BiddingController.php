@@ -18,7 +18,7 @@ class BiddingController extends Controller
      */
     public function index()
     {
-        $auctions = Auction::all();
+        $auctions = Auction::all()->where('status','=','opened');
         return view('bidding',compact('auctions'));
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Auction;
+use App\Models\Goods;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
@@ -19,7 +20,8 @@ class AuctionItemsController extends Controller
     public function index()
     {
         $auctions = Auction::all();
-        return view('auctionItems',compact('auctions'));
+        $goods = Goods::all();
+        return view('auctionItems',compact('auctions','goods'));
     }
 
     /**
@@ -36,33 +38,36 @@ class AuctionItemsController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        //
+        Auction::create($request->all());
+        return redirect()->route('auction_items.index');
     }
 
     /**
      * Display the specified resource.
      *
      * @param  int  $id
-     * @return Response
+     * @return Application|Factory|View|Response
      */
     public function show($id)
     {
-        //
+        $auction = Auction::where('id',$id);
+        return view('history',compact('auction'));
     }
 
     /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
-     * @return Response
+     * @return Application|Factory|View|Response
      */
-    public function edit($id)
+    public function edit(Auction $auction_item)
     {
-        //
+        $goods = Goods::all();
+        return view('edit-auction',compact('auction_item','goods'));
     }
 
     /**
@@ -70,11 +75,12 @@ class AuctionItemsController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
-     * @return Response
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, $id)
     {
-        //
+        Auction::where('id',$id)->update($request->except(['_token','_method']));
+        return redirect()->route('auction_items.index');
     }
 
     /**

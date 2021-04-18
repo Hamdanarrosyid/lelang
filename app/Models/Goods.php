@@ -11,6 +11,7 @@ class Goods extends Model
 
     protected $table = 'goods';
     protected $primaryKey = 'id';
+    protected $fillable = ['goods_name','goods_date','initial_price','descriptions'];
     protected $attributes =[
         'goods_name' => '',
         'initial_price' => 0,

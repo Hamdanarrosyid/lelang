@@ -26,22 +26,23 @@ class GoodsController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return Response
+     * @return string
      */
-    public function create(): Response
+    public function create()
     {
-        //
+//        return 'hello memek';
     }
 
     /**
      * Store a newly created resource in storage.
      *
      * @param Request $request
-     * @return Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request): Response
+    public function store(Request $request)
     {
-        //
+        Goods::create($request->all());
+        return redirect()->route('goods.index');
     }
 
     /**
@@ -50,7 +51,7 @@ class GoodsController extends Controller
      * @param Goods $goods
      * @return Response
      */
-    public function show(Goods $goods): Response
+    public function show(Goods $goods)
     {
         //
     }
@@ -59,11 +60,11 @@ class GoodsController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param Goods $goods
-     * @return Response
+     * @return Application|Factory|View|Response
      */
-    public function edit(Goods $goods): Response
+    public function edit(Goods $good)
     {
-        //
+        return view('edit-goods',compact('good'));
     }
 
     /**
@@ -71,21 +72,25 @@ class GoodsController extends Controller
      *
      * @param Request $request
      * @param Goods $goods
-     * @return Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request, Goods $goods): Response
+    public function update(Request $request, Goods $good): \Illuminate\Http\RedirectResponse
     {
-        //
+        Goods::where('id',$good->id)->update($request->except(['_token','_method']));
+        return redirect()->route('goods.index');
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param Goods $goods
-     * @return Response
+     * @param \App\Models\Goods $good
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(Goods $goods): Response
+    public function destroy(Goods $good): \Illuminate\Http\RedirectResponse
     {
-        //
+        Goods::where('id',$good->id);
+        $good->delete();
+
+        return redirect()->route('goods.index');
     }
 }
