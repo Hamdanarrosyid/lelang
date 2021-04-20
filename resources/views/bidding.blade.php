@@ -1,7 +1,7 @@
 <x-layouts.bidding title="Bidding">
     @section('content')
         <div class="w-10/12">
-            <div >
+            <div>
                 <table class="w-full table-fixed">
                     <thead class="text-left">
                         <tr >
@@ -14,24 +14,25 @@
                     </thead>
                     <tbody>
                     @foreach($auctions as $item)
-                        <tr class="text-gray-800 border">
+                        <tr class="text-gray-800 border {{$item->id}}">
                             <td class="py-3 px-2">{{$item->goods->goods_name}}</td>
                             <td class="py-3 px-2">{{$item->auction_date}}</td>
-                            <td class="py-3 px-2">{{$item->goods->initial_price}}</td>
-                            <td class="py-3 px-2">{{$item->final_price}}</td>
+                            <td class="py-3 px-2">{{number_format($item->goods->initial_price)}}</td>
+                            <td class="py-3 px-2">{{number_format($item->auctionHistories->last()->user_bid??0)}}</td>
                             <td class="py-3 px-2">
 {{--                                <x-button title="View Bid" bg="bg-blue-400" color="text-white"/>--}}
-                                <x-button title="Place Bid" bg="bg-blue-600" color="text-white place-bid"/>
+                                <x-button title="Place Bid" bg="bg-blue-600" color="text-white place-bid-{{$item->id}}"/>
                             </td>
                         </tr>
                     @endforeach
                     </tbody>
                 </table>
-                <x-modal modalClass="place-bid">
+                @foreach($auctions as $item)
+                <x-modal-input modalClass="place-bid-{{$item->id}}" id="{{$item->id}}">
                     <!--Title-->
-                    <div class="flex justify-between items-center pb-3">
+                    <div class="flex justify-between items-center pb-3 {{$item->id}}">
                         <p class="text-2xl font-bold">Place Bid</p>
-                        <div class="add-modal-close cursor-pointer z-50">
+                        <div class="modal-close-{{$item->id}} cursor-pointer z-50">
                             <svg class="fill-current text-black" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18">
                                 <path d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"></path>
                             </svg>
@@ -40,20 +41,21 @@
 
                     <!--Body-->
                     <div class="flex justify-between">
-                        <form id="add_goods_form" class="w-full" action="{{route('goods.store')}}" method="POST">
+                        <form id="modal-input-{{$item->id}}" class="w-full" action="{{route('bidding.store',['id'=>$item->id])}}" method="POST">
+                            @method('patch')
                             @csrf
-                            <label for="place_bid">Bid</label>
-                            <x-input id="place_bid" required type="number" min="10" name="bid" class="focus:outline-none border" placholder="Name goods"/>
-                            <p class="text-sm text-gray-700">bids submitted must not be less than</p>
+                            <label for="place_bid-{{$item->id}}">Bid</label>
+                            <x-input id="place_bid-{{$item->id}}" required type="number" min="{{$item->auctionHistories->last()->user_bid ?? $item->goods->initial_price}}" name="bid" class="focus:outline-none border" placholder="example 10000" value="{{$item->auctionHistories->last()->user_bid??$item->goods->initial_price}}"/>
+                            <p class="text-sm text-gray-700">bids submitted must not be less than {{number_format($item->auctionHistories->last()->user_bid??$item->goods->initial_price)}}</p>
                         </form>
                     </div>
 
                     <!--Footer-->
                     <div class="flex justify-end pt-2">
-                        <button onclick="document.getElementById('add_goods_form').submit()" class="outline-none px-4 bg-transparent py-1 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-800 mr-2">Add</button>
-                        <button class="outline-none add-modal-close px-4 bg-gray-500 py-1 rounded-lg text-white hover:bg-gray-800">Close</button>
+                        <button onclick="document.getElementById('modal-input-{{$item->id}}').submit()" class="outline-none px-4 bg-transparent py-1 rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-800 mr-2">Add</button>
                     </div>
-                </x-modal>
+                </x-modal-input>
+                @endforeach
             </div>
         </div>
     @endsection

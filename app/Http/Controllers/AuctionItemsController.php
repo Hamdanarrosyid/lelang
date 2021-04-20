@@ -54,7 +54,8 @@ class AuctionItemsController extends Controller
      */
     public function show($id)
     {
-        $auction = Auction::where('id',$id);
+        $auction = Auction::all()->where('id',$id)->first();
+
         return view('history',compact('auction'));
     }
 

@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\Auction;
+use App\Models\AuctionHistory;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 
 class BiddingController extends Controller
 {
@@ -36,11 +38,20 @@ class BiddingController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return Response
+     * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request,$id)
     {
-        dd($request);
+        $user = Auth::user()->id;
+        $store_history = AuctionHistory::create([
+            'auction_id' => $id,
+            'user_bid' => $request->bid,
+            'user_id' => $user
+        ]);
+        if($store_history){
+            $store_history->users()->attach($user);
+        }
+        return redirect()->route('bidding.index');
     }
 
     /**
@@ -74,7 +85,7 @@ class BiddingController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        dd($id);
     }
 
     /**

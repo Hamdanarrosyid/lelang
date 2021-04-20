@@ -17,5 +17,6 @@ Route::get('/home',function(){
 
 Route::resource('/goods', GoodsController::class)->middleware('auth');
 Route::resource('/auction_items', AuctionItemsController::class)->middleware('auth');
-Route::resource('/bidding', BiddingController::class)->middleware('auth');
+Route::resource('/bidding', BiddingController::class)->middleware('auth')->except('store');
+Route::patch('/bidding/store/{id}',[BiddingController::class,'store'])->middleware('auth')->name('bidding.store');
 Route::resource('/reports', ReportsController::class)->middleware('auth');

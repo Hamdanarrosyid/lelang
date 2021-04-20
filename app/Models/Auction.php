@@ -13,17 +13,16 @@ class Auction extends Model
 
     protected $table = 'auctions';
     protected $primaryKey = 'id';
-//    protected $attributes =[
-//        'status' => ['opened','closed'],
-//    ];
     protected $fillable=['goods_id','auction_date','status','final_price'];
 
     public function goods(): BelongsTo
     {
         return $this->belongsTo(Goods::class);
     }
-    public function users(): BelongsToMany
+
+    public function auctionHistories()
     {
-        return $this->belongsToMany(User::class);
+        return $this->hasMany(AuctionHistory::class);
     }
+
 }
